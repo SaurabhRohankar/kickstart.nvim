@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -176,10 +176,10 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
--- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
--- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
--- vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
--- vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
+vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
+vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
+vim.keymap.set('n', '<up>', '<cmd>echo "Use k to move!!"<CR>')
+vim.keymap.set('n', '<down>', '<cmd>echo "Use j to move!!"<CR>')
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
@@ -254,6 +254,55 @@ require('lazy').setup({
         changedelete = { text = '~' },
       },
     },
+  },
+
+  {
+    'ThePrimeagen/harpoon',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    config = function()
+      local harpoon_mark = require 'harpoon.mark'
+      local harpoon_ui = require 'harpoon.ui'
+
+      -- Setup harpoon (this line is enough)
+      require('harpoon').setup()
+
+      -- Keymaps
+      vim.keymap.set('n', '<leader>a', function()
+        harpoon_mark.add_file()
+      end, { desc = 'Harpoon add file' })
+
+      vim.keymap.set('n', '<C-e>', function()
+        harpoon_ui.toggle_quick_menu()
+      end, { desc = 'Harpoon toggle quick menu' })
+
+      -- Navigate to specific marks
+      vim.keymap.set('n', '<C-h>', function()
+        harpoon_ui.nav_file(1)
+      end, { desc = 'Harpoon go to mark 1' })
+      vim.keymap.set('n', '<C-t>', function()
+        harpoon_ui.nav_file(2)
+      end, { desc = 'Harpoon go to mark 2' })
+      vim.keymap.set('n', '<C-n>', function()
+        harpoon_ui.nav_file(3)
+      end, { desc = 'Harpoon go to mark 3' })
+      vim.keymap.set('n', '<C-s>', function()
+        harpoon_ui.nav_file(4)
+      end, { desc = 'Harpoon go to mark 4' })
+
+      -- Replace marks (there's no direct API for this, but you can re-add files at specific positions)
+      vim.keymap.set('n', '<leader><C-h>', function()
+        harpoon_mark.set_current_at(1)
+      end, { desc = 'Replace mark at position 1' })
+      vim.keymap.set('n', '<leader><C-t>', function()
+        harpoon_mark.set_current_at(2)
+      end, { desc = 'Replace mark at position 2' })
+      vim.keymap.set('n', '<leader><C-n>', function()
+        harpoon_mark.set_current_at(3)
+      end, { desc = 'Replace mark at position 3' })
+      vim.keymap.set('n', '<leader><C-s>', function()
+        harpoon_mark.set_current_at(4)
+      end, { desc = 'Replace mark at position 4' })
+    end,
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -759,7 +808,7 @@ require('lazy').setup({
               luasnip.expand_or_jump()
             end
           end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
+          ['<C-g>'] = cmp.mapping(function()
             if luasnip.locally_jumpable(-1) then
               luasnip.jump(-1)
             end
